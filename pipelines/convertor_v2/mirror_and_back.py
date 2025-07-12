@@ -2,8 +2,15 @@ from diffusers import StableDiffusionInpaintPipeline
 import torch
 from PIL import Image
 import cv2
+import json
+import os
+
+def load_prompts(json_path="prompts.json"):
+    with open(json_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 def generate_back_texture(image_path, mask_front_path, output_texture_path, output_mask_path):
+    prompts = load_prompts()
     # Mirror mask
     mask_front = cv2.imread(mask_front_path, 0)
     mask_back = cv2.flip(mask_front, 1)
@@ -16,8 +23,8 @@ def generate_back_texture(image_path, mask_front_path, output_texture_path, outp
     pipe = StableDiffusionInpaintPipeline.from_pretrained(
         "runwayml/stable-diffusion-inpainting",
         torch_dtype=torch.float16,
-        safety_checker=None  # Désactive le filtre NSFW
+        safety_checker=None
     ).to("cuda")
-    prompt = "back view of a person wearing clothes, realistic, full body, natural lighting, high detail"
+    prompt = prompts.get("back", "back view of a person")
     result = pipe(prompt=prompt, image=pil_image, mask_image=pil_mask).images[0]
     result.save(output_texture_path)
