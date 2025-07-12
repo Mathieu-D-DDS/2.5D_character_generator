@@ -4,21 +4,20 @@ import torch
 import cv2
 import numpy as np
 
-# Ajoute le dossier 'external' à sys.path pour que 'midas' soit reconnu comme package
-sys.path.insert(0, os.path.abspath("external"))
+# Ajoute le dossier racine pour que 'midas' soit reconnu comme package
+sys.path.insert(0, os.path.abspath("."))
+
 from midas.dpt_depth import DPTDepthModel
 
 def run(image):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "model_weights/midas/dpt_swin2_tiny_256.pt"
-
+    model_path = os.path.join("midas", "dpt_swin2_tiny_256.pt")
     model = DPTDepthModel(
         path=model_path,
-        backbone="swin2_tiny_256",
+        backbone="swin2t16_256",
         non_negative=True,
         enable_attention_hooks=False,
     )
-    model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
     model.to(device)
 
