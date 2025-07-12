@@ -1,39 +1,23 @@
 import os
-
 from pipelines.convertor_v2.segmentation import extract_silhouette
-from pipelines.convertor_v2.texture_front import generate_front_texture
-from pipelines.convertor_v2.mirror_and_back import generate_back_texture
-from pipelines.convertor_v2.side_projection import generate_side_masks
-from pipelines.convertor_v2.texture_side import generate_side_texture
-from pipelines.convertor_v2.uv_assembly import assemble_uv
+from pipelines.convertor_v2 import skeleton_extraction, morphology_extraction
 
-# Chemins fichiers
 INPUT_IMAGE = "input/model_alpha.jpeg"
 MASK_FRONT = "models/model_alpha_mask.png"
-TEXTURE_FRONT = "models/model_alpha_texture_front.png"
-MASK_BACK = "models/model_alpha_mask_back.png"
-TEXTURE_BACK = "models/model_alpha_texture_back.png"
-MASK_LEFT = "models/model_alpha_mask_left.png"
-MASK_RIGHT = "models/model_alpha_mask_right.png"
-TEXTURE_LEFT = "models/model_alpha_texture_left.png"
-TEXTURE_RIGHT = "models/model_alpha_texture_right.png"
-UV_MAP = "models/model_alpha_uv_map.png"
+SKELETON_JSON = "models/model_alpha_skeleton.json"
+MORPHO_JSON = "models/model_alpha_morphology.json"
 
 def main():
-    # 1. Segmentation frontale
-    extract_silhouette(INPUT_IMAGE, MASK_FRONT)
-    # 2. Génération texture frontale
-    generate_front_texture(INPUT_IMAGE, MASK_FRONT, TEXTURE_FRONT)
-    # 3. Mirroring + génération dos
-    generate_back_texture(INPUT_IMAGE, MASK_FRONT, TEXTURE_BACK, MASK_BACK)
-    # 4. Génération masques latéraux
-    generate_side_masks(MASK_FRONT, MASK_BACK, MASK_LEFT, MASK_RIGHT)
-    # 5. Génération textures profils
-    generate_side_texture(INPUT_IMAGE, MASK_LEFT, TEXTURE_LEFT, "left")
-    generate_side_texture(INPUT_IMAGE, MASK_RIGHT, TEXTURE_RIGHT, "right")
-    # 6. Assemblage UV
-    assemble_uv(TEXTURE_FRONT, TEXTURE_BACK, TEXTURE_LEFT, TEXTURE_RIGHT, UV_MAP)
-    print(f"Texture UV générée : {UV_MAP}")
+    # 1. Générer le mask s'il n'existe pas
+    if not os.path.exists(MASK_FRONT):
+        extract_silhouette(INPUT_IMAGE, MASK_FRONT)
+        print(f"Mask généré : {MASK_FRONT}")
+    else:
+        print(f"Mask déjà présent : {MASK_FRONT}")
+    # 2. Extraire le squelette
+    skeleton_extraction.extract_pose_landmarks(INPUT_IMAGE, SKELETON_JSON)
+    # 3. Extraction morphologique
+    morphology_extraction.run(SKELETON_JSON, MASK_FRONT, MORPHO_JSON)
 
 if __name__ == "__main__":
     main()

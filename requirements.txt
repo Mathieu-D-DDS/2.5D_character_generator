@@ -24,3 +24,5 @@ tqdm
 
 # Pour l'inpainting avancé, optionnel
 scipy
+
+onnxruntime
