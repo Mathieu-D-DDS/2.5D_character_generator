@@ -1,0 +1,40 @@
+# Traitement d'image et manipulation
+Pillow
+
+# Traitement scientifique (pour manipulations avancées, matrices, etc.)
+numpy
+
+# Segmentation, détection de pose, estimation profondeur
+opencv-python
+mediapipe
+torch
+torchvision
+# Pour MiDaS (estimation de profondeur)
+timm
+
+# Stable Diffusion et ControlNet (inpainting, génération, etc.)
+diffusers[torch]
+transformers
+# Pour ControlNet/Stable Diffusion, gestion de modèles, prompts, etc.
+accelerate
+safetensors
+
+# Utilitaires divers
+tqdm
+
+# Pour l'inpainting avancé, optionnel
+scipy
+
+# Pour exécuter des scripts Python en sous-processus si besoin (standard)
+# Pas besoin d'ajouter subprocess
+
+# Pour s'assurer de la compatibilité, on peut spécifier des versions minimales (optionnel)
+# Pillow>=9.0.0
+# torch>=2.0.0
+# diffusers>=0.19.0
+# transformers>=4.30.0
+
+# Si besoin d'une interface CLI avancée
+# click
+
+# Pour l'installation de modèles ControlNet/MiDaS : voir docs respectives, installation manuelle souvent nécessaire
