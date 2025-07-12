@@ -45,17 +45,28 @@ def download_midas_code():
     try:
         response = urllib.request.urlopen(MIDAS_CODE_URL)
         zip_file = zipfile.ZipFile(io.BytesIO(response.read()))
-        # Extraction du dossier midas
         for member in zip_file.namelist():
             if member.startswith("MiDaS-master/midas/"):
                 # Chemin relatif à "midas/"
                 rel_path = member[len("MiDaS-master/midas/"):]
-                if rel_path:  # Ignore le dossier racine
-                    dest_path = os.path.join(MIDAS_CODE_DEST, rel_path.replace("/", os.sep).replace("\\", os.sep))
+                if not rel_path:
+                    continue  # Ignore le dossier racine
+                dest_path = os.path.join(MIDAS_CODE_DEST, rel_path.replace("/", os.sep).replace("\\", os.sep))
+                # Vérifie si c'est un fichier (dans le zip, les dossiers se terminent par /)
+                if member.endswith("/"):
+                    # C'est un dossier, on le crée si besoin
+                    os.makedirs(dest_path, exist_ok=True)
+                else:
+                    # C'est un fichier
                     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
                     with zip_file.open(member) as source, open(dest_path, "wb") as target:
                         target.write(source.read())
-        print(f"→ Code MiDaS extrait dans {MIDAS_CODE_DEST}")
+                print(f"→ Code MiDaS extrait dans {MIDAS_CODE_DEST}")
+        # Ajout du fichier __init__.py
+        init_path = os.path.join(MIDAS_CODE_DEST, "__init__.py")
+        with open(init_path, "w", encoding="utf-8") as f:
+            f.write("# Rend le dossier 'midas' utilisable comme package Python\n")
+        print(f"✓ Fichier __init__.py ajouté dans {MIDAS_CODE_DEST}")
     except Exception as e:
         print(f"❌ Erreur lors du téléchargement du code MiDaS: {e}")
 

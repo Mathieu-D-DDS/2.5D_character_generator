@@ -4,9 +4,9 @@ import torch
 import cv2
 import numpy as np
 
-# Ajoute le dossier du code MiDaS à sys.path
-sys.path.insert(0, os.path.abspath(os.path.join("external", "midas")))
-from dpt_depth import DPTDepthModel
+# Ajoute le dossier 'external' à sys.path pour que 'midas' soit reconnu comme package
+sys.path.insert(0, os.path.abspath("external"))
+from midas.dpt_depth import DPTDepthModel
 
 def run(image):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
