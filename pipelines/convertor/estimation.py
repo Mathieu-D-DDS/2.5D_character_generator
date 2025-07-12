@@ -9,12 +9,19 @@ sys.path.insert(0, os.path.abspath("."))
 
 from midas.dpt_depth import DPTDepthModel
 
+# Choisis ici le backbone et le poids (Tiny ou Base, les deux sont compatibles)
+BACKBONE = "swin2t16_256"  # Pour Tiny
+MODEL_PATH = os.path.join("midas", "dpt_swin2_tiny_256.pt")
+
+# Pour Base (si tu veux essayer, décommente ces deux lignes)
+# BACKBONE = "swin2b24_384"
+# MODEL_PATH = os.path.join("midas", "dpt_swin2_base_384.pt")
+
 def run(image):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = os.path.join("midas", "dpt_swin2_tiny_256.pt")
     model = DPTDepthModel(
-        path=model_path,
-        backbone="swin2t16_256",
+        path=MODEL_PATH,
+        backbone=BACKBONE,
         non_negative=True,
         enable_attention_hooks=False,
     )
