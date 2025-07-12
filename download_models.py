@@ -5,26 +5,15 @@ import urllib.request
 MODELS = [
     {
         "name": "MiDaS v3.1 Small",
-        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/model-small.onnx",
-        "dest": "models/midas/model-small.onnx"
+        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_swin2_tiny_256.pt",
+        "dest": "model_weights/midas/dpt_swin2_tiny_256.pt"
     },
     {
         "name": "MiDaS v3.1 Large",
-        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/model-f6b98070.onnx",
-        "dest": "models/midas/model-f6b98070.onnx"
+        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_large_384.pt",
+        "dest": "model_weights/midas/dpt_large_384.pt"
     },
-    # Stable Diffusion / ControlNet : liens de modèles poids publics (à adapter selon vos usages/licences)
-    # Exemples :
-    # {
-    #     "name": "Stable Diffusion v1.5",
-    #     "url": "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-    #     "dest": "models/sd/v1-5-pruned-emaonly.ckpt"
-    # },
-    # {
-    #     "name": "ControlNet pose",
-    #     "url": "https://huggingface.co/lllyasviel/ControlNet/resolve/main/models/control_sd15_openpose.pth",
-    #     "dest": "models/controlnet/control_sd15_openpose.pth"
-    # }
+    # Ajoute ici d'autres modèles si nécessaire
 ]
 
 def download_model(model):
