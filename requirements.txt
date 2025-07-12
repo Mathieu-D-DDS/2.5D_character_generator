@@ -25,4 +25,4 @@ tqdm
 # Pour l'inpainting avancé, optionnel
 scipy
 
-onnxruntime
+segment-anything
