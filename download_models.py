@@ -1,20 +1,24 @@
 import os
 import urllib.request
+import zipfile
+import io
+import shutil
 
-# Liste des modèles à télécharger
 MODELS = [
     {
         "name": "MiDaS v3.1 Small",
         "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_swin2_tiny_256.pt",
-        "dest": "model_weights/midas/dpt_swin2_tiny_256.pt"
+        "dest": os.path.join("model_weights", "midas", "dpt_swin2_tiny_256.pt")
     },
     {
-        "name": "MiDaS v3.1 Large",
-        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_large_384.pt",
-        "dest": "model_weights/midas/dpt_large_384.pt"
+        "name": "MiDaS v3.1 Base",
+        "url": "https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_swin2_base_384.pt",
+        "dest": os.path.join("model_weights", "midas", "dpt_swin2_base_384.pt")
     },
-    # Ajoute ici d'autres modèles si nécessaire
 ]
+
+MIDAS_CODE_URL = "https://github.com/isl-org/MiDaS/archive/refs/heads/master.zip"
+MIDAS_CODE_DEST = os.path.join("external", "midas")
 
 def download_model(model):
     os.makedirs(os.path.dirname(model["dest"]), exist_ok=True)
@@ -28,8 +32,35 @@ def download_model(model):
     except Exception as e:
         print(f"❌ Erreur pour {model['name']}: {e}")
 
+def download_midas_code():
+    # Nettoie le dossier cible
+    if os.path.exists(MIDAS_CODE_DEST):
+        print(f"Suppression du dossier existant {MIDAS_CODE_DEST} ...")
+        try:
+            shutil.rmtree(MIDAS_CODE_DEST)
+        except Exception as e:
+            print(f"Erreur lors du nettoyage : {e}")
+            return
+    print("Téléchargement du code source MiDaS ...")
+    try:
+        response = urllib.request.urlopen(MIDAS_CODE_URL)
+        zip_file = zipfile.ZipFile(io.BytesIO(response.read()))
+        # Extraction du dossier midas
+        for member in zip_file.namelist():
+            if member.startswith("MiDaS-master/midas/"):
+                # Chemin relatif à "midas/"
+                rel_path = member[len("MiDaS-master/midas/"):]
+                if rel_path:  # Ignore le dossier racine
+                    dest_path = os.path.join(MIDAS_CODE_DEST, rel_path.replace("/", os.sep).replace("\\", os.sep))
+                    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                    with zip_file.open(member) as source, open(dest_path, "wb") as target:
+                        target.write(source.read())
+        print(f"→ Code MiDaS extrait dans {MIDAS_CODE_DEST}")
+    except Exception as e:
+        print(f"❌ Erreur lors du téléchargement du code MiDaS: {e}")
+
 if __name__ == "__main__":
     for m in MODELS:
         download_model(m)
-    print("\nTéléchargement terminé.")
-    print("Vous pouvez compléter ou ajuster la liste des modèles dans download_models.py selon vos besoins.")
+    download_midas_code()
+    print("\nTéléchargement terminé.\nVous pouvez compléter ou ajuster la liste des modèles dans download_models.py selon vos besoins.")

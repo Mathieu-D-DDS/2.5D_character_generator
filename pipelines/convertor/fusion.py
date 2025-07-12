@@ -1,4 +1,6 @@
-def run(image):
-    # TODO: Post-process/fusion des différentes parties de la texture
-    print("[Fusion] Fusion/post-processing de la texture")
-    return image  # Placeholder
+from PIL import Image
+
+def run(texture_image):
+    # Pour la première version, on retourne directement l'image
+    # Ajoute ici blending, ajustement de couleurs, etc. si besoin
+    return texture_image
